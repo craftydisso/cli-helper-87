@@ -1,26 +1,17 @@
-import json
-from typing import Any, Dict
+import sys
+from validators import validate_input
 
-def parse_json(data: str) -> Dict[str, Any]:
-    try:
-        return json.loads(data)
-    except json.JSONDecodeError:
-        return {}  # Return an empty dict on error
-
-
-def format_data(data: Dict[str, Any]) -> str:
-    return json.dumps(data, indent=4)
+def main_loop():
+    while True:
+        user_input = input('Enter command: ')
+        if validate_input(user_input):
+            process_command(user_input)
+        else:
+            print('Invalid command. Please try again.')
 
 
-def get_value(data: Dict[str, Any], key: str, default: Any = None) -> Any:
-    return data.get(key, default)
+def process_command(command):
+    print(f'Processing command: {command}')
 
-
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
-    merged = dict1.copy()
-    merged.update(dict2)
-    return merged
-
-
-def filter_keys(data: Dict[str, Any], keys: set) -> Dict[str, Any]:
-    return {k: data[k] for k in data if k in keys}
+if __name__ == '__main__':
+    main_loop()
