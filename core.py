@@ -1,28 +1,16 @@
-import json
-import os
+import time
 
-class ConfigLoader:
-    def __init__(self, default_config):
-        self.default_config = default_config
-        self.config = default_config.copy()
+def optimize_performance(data):
+    start_time = time.time()
+    processed_data = [process_item(item) for item in data]
+    end_time = time.time()
+    print(f'Processing took {end_time - start_time:.2f} seconds')
+    return processed_data
 
-    def load(self, filepath):
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as file:
-                user_config = json.load(file)
-                self.config.update(user_config)
-
-    def get(self, key, default=None):
-        return self.config.get(key, default)
+def process_item(item):
+    # Simulate a processing operation
+    return item * 2
 
 if __name__ == '__main__':
-    defaults = {
-        'resolution': '1920x1080',
-        'fullscreen': True,
-        'volume': 100
-    }
-    loader = ConfigLoader(defaults)
-    loader.load('config.json')
-    print(loader.get('resolution'))
-    print(loader.get('fullscreen'))
-    print(loader.get('music_volume', 50))
+    sample_data = range(1000000)
+    result = optimize_performance(sample_data)
