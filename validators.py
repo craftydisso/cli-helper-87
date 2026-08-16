@@ -1,17 +1,13 @@
-import time
-import requests
+import re
 
-class NetworkError(Exception):
+class InputValidationError(Exception):
     pass
 
-def retry_request(url, retries=3, delay=2):
-    for attempt in range(retries):
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException:
-            if attempt < retries - 1:
-                time.sleep(delay)
-                continue
-            raise NetworkError(f'Failed to fetch data from {url} after {retries} attempts')
+def validate_input(user_input):
+    if not isinstance(user_input, str):
+        raise InputValidationError("Input must be a string.")
+    if len(user_input) == 0:
+        raise InputValidationError("Input cannot be empty.")
+    if not re.match("^[a-zA-Z0-9_]*$, user_input):
+        raise InputValidationError("Input can only contain alphanumeric characters and underscores.")
+    return True
