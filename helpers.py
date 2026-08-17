@@ -1,23 +1,35 @@
-import time
+import json
 
-def time_execution(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        print(f'Execution time for {func.__name__}: {end_time - start_time:.4f} seconds')
-        return result
-    return wrapper
+class GameError(Exception):
+    pass
 
-@time_execution
-def calculate_score(level, time_taken):
-    base_score = 1000
-    return base_score - (level * 50) - (time_taken * 10)
+class FileNotFoundError(GameError):
+    pass
 
-@time_execution
-def generate_leaderboard(scores):
-    return sorted(scores.items(), key=lambda item: item[1], reverse=True)
+class InvalidInputError(GameError):
+    pass
 
-@time_execution
-def level_completion(level, time_taken):
-    return calculate_score(level, time_taken) > 500
+def load_game_data(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File {file_path} not found.")
+    except json.JSONDecodeError:
+        raise GameError(f"Failed to decode JSON from {file_path}.")
+
+
+def validate_input(user_input, valid_options):
+    if user_input not in valid_options:
+        raise InvalidInputError("Input is not valid.")
+
+
+def main():
+    try:
+        data = load_game_data('game_data.json')
+        validate_input('example', data['options'])
+    except GameError as e:
+        print(e)
+
+if __name__ == '__main__':
+    main()
