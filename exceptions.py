@@ -1,20 +1,32 @@
-class GameDataError(Exception):
+class GameError(Exception):
     def __init__(self, message):
-        super().__init__(message)
         self.message = message
+        super().__init__(self.message)
 
-class InvalidScoreError(GameDataError):
-    def __init__(self, score):
-        super().__init__(f'Invalid score: {score}')
+class InvalidInputError(GameError):
+    pass
 
-class PlayerNotFoundError(GameDataError):
-    def __init__(self, player_name):
-        super().__init__(f'Player not found: {player_name}')
+class ResourceNotFoundError(GameError):
+    pass
 
-class GameNotInitializedError(GameDataError):
-    def __init__(self):
-        super().__init__('Game has not been initialized')
+class OperationFailedError(GameError):
+    def __init__(self, message, errors=None):
+        super().__init__(message)
+        self.errors = errors
 
-class DataFormatError(GameDataError):
-    def __init__(self, value):
-        super().__init__(f'Incorrect data format: {value}')
+class ConfigurationError(GameError):
+    def __init__(self, message, config_key):
+        super().__init__(message)
+        self.config_key = config_key
+
+
+def handle_error(error):
+    if isinstance(error, InvalidInputError):
+        return {'error': 'Invalid input', 'message': str(error)}
+    elif isinstance(error, ResourceNotFoundError):
+        return {'error': 'Resource not found', 'message': str(error)}
+    elif isinstance(error, OperationFailedError):
+        return {'error': 'Operation failed', 'message': str(error), 'details': error.errors}
+    elif isinstance(error, ConfigurationError):
+        return {'error': 'Configuration error', 'message': str(error), 'key': error.config_key}
+    return {'error': 'Unknown error', 'message': str(error)}
